@@ -60,6 +60,7 @@ class Calculator {
         return;
     }
     this.readyToReset = true;
+    computation = Number(computation.toFixed(14))
     this.currentOperand = computation;
     this.operation = undefined;
     this.previousOperand = '';
