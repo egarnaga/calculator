@@ -2,8 +2,7 @@ class Calculator {
   constructor(previousOperandTextElement, currentOperandTextElement) {
     this.previousOperandTextElement = previousOperandTextElement;
     this.currentOperandTextElement = currentOperandTextElement;
-    this.readyToReset = false;
-    this.clear();
+    this.clear()
   }
 
   clear() {
@@ -23,8 +22,8 @@ class Calculator {
 
   chooseOperation(operation) {
     if (this.currentOperand === '') return;
-    if (this.previousOperand !== '' && this.previousOperand !== '') {
-      this.compute();
+    if (this.previousOperand !== '') {
+      this.compute()
     }
     this.operation = operation;
     this.previousOperand = this.currentOperand;
@@ -39,20 +38,19 @@ class Calculator {
     switch (this.operation) {
       case '+':
         computation = prev + current;
-        break
+        break;
       case '-':
         computation = prev - current;
-        break
+        break;
       case '*':
         computation = prev * current;
-        break
+        break;
       case '÷':
         computation = prev / current;
-        break
+        break;
       default:
         return;
     }
-    this.readyToReset = true;
     this.currentOperand = computation;
     this.operation = undefined;
     this.previousOperand = '';
