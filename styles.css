@@ -16,7 +16,7 @@ body {
   align-content: center;
   min-height: 100vh;
   grid-template-columns: repeat(4, 100px);
-  grid-template-rows: minmax(120px, auto) repeat(5, 100px);
+  grid-template-rows: minmax(120px, auto) repeat(6, 100px);
 }
 
 .calculator-grid > button {
@@ -34,6 +34,10 @@ body {
 /* .span-two {
   grid-column: span 2;
 } */
+
+.span-four {
+  grid-column: span 4;
+}
 
 .output {
   grid-column: 1 / -1;

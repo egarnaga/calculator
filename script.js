@@ -17,8 +17,14 @@ class Calculator {
   }
 
   appendNumber(number) {
-    if (number === '.' && this.currentOperand.includes('.')) return;
+    //span.removeChild(errorMessage);
+    if (number == '.' && this.currentOperand.includes('.')) return;
+    if (this.operation === '√') return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
+  }
+
+ makeNumberNegative() {
+    this.currentOperand = '-' + this.currentOperand.toString();
   }
 
   chooseOperation(operation) {
@@ -31,6 +37,7 @@ class Calculator {
     this.currentOperand = '';
   }
 
+  
   compute() {
     let computation;
     const prev = parseFloat(this.previousOperand);
@@ -54,13 +61,18 @@ class Calculator {
         computation = Math.pow(prev, current);
         break;
       case '√':
+        if(prev.toString()[0] === '-') {
+          console.log('оп!')
+          //this.errorMessage.innerText = '<span>жопа!</span>';
+          span.appendChild(errorMessage);
+        }
         computation = Math.sqrt(prev);
         break;
       default:
         return;
     }
     this.readyToReset = true;
-    computation = Number(computation.toFixed(14))
+    computation = Number(computation.toFixed(14));
     this.currentOperand = computation;
     this.operation = undefined;
     this.previousOperand = '';
@@ -84,6 +96,7 @@ class Calculator {
   }
 
   updateDisplay() {
+    
     this.currentOperandTextElement.innerText =
       this.getDisplayNumber(this.currentOperand)
     if (this.operation != null) {
@@ -101,6 +114,13 @@ const operationButtons = document.querySelectorAll('[data-operation]');
 const equalsButton = document.querySelector('[data-equals]');
 const deleteButton = document.querySelector('[data-delete]');
 const allClearButton = document.querySelector('[data-all-clear]');
+const minusXButton = document.querySelector('[data-minus-x]');
+
+const span = document.querySelector('.error-message');
+const errorMessage = document.createElement('span');
+errorMessage.innerText = 'error';
+console.log(errorMessage)
+
 const previousOperandTextElement = document.querySelector('[data-previous-operand]');
 const currentOperandTextElement = document.querySelector('[data-current-operand]');
 
@@ -117,13 +137,22 @@ numberButtons.forEach(button => {
       }
       calculator.appendNumber(button.innerText)
       calculator.updateDisplay();
+
+      if (span.innerHTML === '<span>error</span>') {
+        span.removeChild(errorMessage);
+      }
+
   })
 })
+
 
 operationButtons.forEach(button => {
   button.addEventListener('click', () => {
     calculator.chooseOperation(button.innerText);
     calculator.updateDisplay();
+    if (span.innerHTML === '<span>error</span>') {
+      span.removeChild(errorMessage);
+    }
   })
 })
 
@@ -135,9 +164,23 @@ equalsButton.addEventListener('click', button => {
 allClearButton.addEventListener('click', button => {
   calculator.clear();
   calculator.updateDisplay();
+  if (span.innerHTML === '<span>error</span>') {
+    span.removeChild(errorMessage);
+  }
 })
 
 deleteButton.addEventListener('click', button => {
   calculator.delete();
   calculator.updateDisplay();
+  if (span.innerHTML === '<span>error</span>') {
+    span.removeChild(errorMessage);
+  }
+})
+
+minusXButton.addEventListener('click', button => {
+  calculator.makeNumberNegative();
+  calculator.updateDisplay();
+  if (span.innerHTML === '<span>error</span>') {
+    span.removeChild(errorMessage);
+  }
 })
