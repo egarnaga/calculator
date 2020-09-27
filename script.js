@@ -17,7 +17,6 @@ class Calculator {
   }
 
   appendNumber(number) {
-    //span.removeChild(errorMessage);
     if (number == '.' && this.currentOperand.includes('.')) return;
     if (this.operation === '√') return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
@@ -42,7 +41,6 @@ class Calculator {
     let computation;
     const prev = parseFloat(this.previousOperand);
     const current = parseFloat(this.currentOperand);
-    //if (isNaN(prev) || isNaN(current)) return;
     if (isNaN(prev) || (isNaN(current) && this.operation !== '√')) return;
     switch (this.operation) {
       case '+':
@@ -62,8 +60,6 @@ class Calculator {
         break;
       case '√':
         if(prev.toString()[0] === '-') {
-          console.log('оп!')
-          //this.errorMessage.innerText = '<span>жопа!</span>';
           span.appendChild(errorMessage);
         }
         computation = Math.sqrt(prev);
@@ -79,35 +75,33 @@ class Calculator {
   }
 
   getDisplayNumber(number) {
-    const stringNumber = number.toString()
-    const integerDigits = parseFloat(stringNumber.split('.')[0])
-    const decimalDigits = stringNumber.split('.')[1]
-    let integerDisplay
+    const stringNumber = number.toString();
+    const integerDigits = parseFloat(stringNumber.split('.')[0]);
+    const decimalDigits = stringNumber.split('.')[1];
+    let integerDisplay;
     if (isNaN(integerDigits)) {
-      integerDisplay = ''
+      integerDisplay = '';
     } else {
-      integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 })
+      integerDisplay = integerDigits.toLocaleString('en', { maximumFractionDigits: 0 });
     }
     if (decimalDigits != null) {
-      return `${integerDisplay}.${decimalDigits}`
+      return `${integerDisplay}.${decimalDigits}`;
     } else {
-      return integerDisplay
+      return integerDisplay;
     }
   }
 
   updateDisplay() {
-    
     this.currentOperandTextElement.innerText =
-      this.getDisplayNumber(this.currentOperand)
+      this.getDisplayNumber(this.currentOperand);
     if (this.operation != null) {
       this.previousOperandTextElement.innerText =
-        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`
+        `${this.getDisplayNumber(this.previousOperand)} ${this.operation}`;
     } else {
-      this.previousOperandTextElement.innerText = ''
+      this.previousOperandTextElement.innerText = '';
     }
   }
 }
-
 
 const numberButtons = document.querySelectorAll('[data-number]');
 const operationButtons = document.querySelectorAll('[data-operation]');
@@ -119,7 +113,6 @@ const minusXButton = document.querySelector('[data-minus-x]');
 const span = document.querySelector('.error-message');
 const errorMessage = document.createElement('span');
 errorMessage.innerText = 'error';
-console.log(errorMessage)
 
 const previousOperandTextElement = document.querySelector('[data-previous-operand]');
 const currentOperandTextElement = document.querySelector('[data-current-operand]');
@@ -129,19 +122,18 @@ const calculator = new Calculator(previousOperandTextElement, currentOperandText
 numberButtons.forEach(button => {
   button.addEventListener("click", () => {
 
-      if(calculator.previousOperand === "" &&
-      calculator.currentOperand !== "" &&
+    if(calculator.previousOperand === "" &&
+    calculator.currentOperand !== "" &&
   calculator.readyToReset) {
-          calculator.currentOperand = "";
-          calculator.readyToReset = false;
-      }
-      calculator.appendNumber(button.innerText)
-      calculator.updateDisplay();
+        calculator.currentOperand = "";
+        calculator.readyToReset = false;
+    }
+    calculator.appendNumber(button.innerText);
+    calculator.updateDisplay();
 
-      if (span.innerHTML === '<span>error</span>') {
-        span.removeChild(errorMessage);
-      }
-
+    if (span.innerHTML === '<span>error</span>') {
+      span.removeChild(errorMessage);
+    }
   })
 })
 
