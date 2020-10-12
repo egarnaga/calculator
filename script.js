@@ -23,7 +23,11 @@ class Calculator {
   }
 
  makeNumberNegative() {
+   if (this.currentOperand[0] === '-') {
+    this.currentOperand = this.currentOperand.substr(1);
+   } else {
     this.currentOperand = '-' + this.currentOperand.toString();
+   }
   }
 
   chooseOperation(operation) {
@@ -36,7 +40,6 @@ class Calculator {
     this.currentOperand = '';
   }
 
-  
   compute() {
     let computation;
     const prev = parseFloat(this.previousOperand);
