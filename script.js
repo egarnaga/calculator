@@ -15,6 +15,7 @@ class Calculator {
 
   delete() {
     this.currentOperand = this.currentOperand.toString().slice(0, -1);
+    this.readyToReset = false;
   }
 
   appendNumber(number) {
