@@ -10,6 +10,7 @@ class Calculator {
     this.currentOperand = '';
     this.previousOperand = '';
     this.operation = undefined;
+    this.readyToReset = false;
   }
 
   delete() {
@@ -17,7 +18,7 @@ class Calculator {
   }
 
   appendNumber(number) {
-    if (number == '.' && this.currentOperand.includes('.')) return;
+    if (number === '.' && this.currentOperand.includes('.')) return;
     if (this.operation === '√') return;
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
@@ -35,14 +36,16 @@ class Calculator {
     if (this.previousOperand !== '' && this.previousOperand !== '') {
       this.compute();
     }
+
     this.operation = operation;
+
     this.previousOperand = this.currentOperand;
     this.currentOperand = '';
   }
 
   compute() {
     let computation;
-    const prev = parseFloat(this.previousOperand);
+    let prev = parseFloat(this.previousOperand);
     const current = parseFloat(this.currentOperand);
     if (isNaN(prev) || (isNaN(current) && this.operation !== '√')) return;
     switch (this.operation) {
@@ -56,16 +59,20 @@ class Calculator {
         computation = prev * current;
         break
       case '÷':
-        computation = prev / current;
+        if (current === 0) {
+          computation = NaN;
+          span.appendChild(errorMessage);
+        } else {
+          computation = prev / current;
+        }
         break
       case '^':
-        computation = Math.pow(prev, current);
-        break;
-      case '√':
-        if(prev.toString()[0] === '-') {
-          span.appendChild(errorMessage);
+        if (prev.toString()[0] === '-') {
+          prev = prev.toString().substr(1);
+          computation = -Math.pow(prev, current);
+        } else {
+          computation = Math.pow(prev, current);
         }
-        computation = Math.sqrt(prev);
         break;
       default:
         return;
@@ -75,6 +82,35 @@ class Calculator {
     this.currentOperand = computation;
     this.operation = undefined;
     this.previousOperand = '';
+  }
+
+  computeSqrt() {
+    let computation;
+    let prev = parseFloat(this.previousOperand);
+    let current = parseFloat(this.currentOperand);
+
+    if(current.toString()[0] === '-') {
+      span.appendChild(errorMessage);
+      computation = Math.sqrt(current);
+
+      this.readyToReset = true;
+      computation = Number(computation.toFixed(14));
+      this.currentOperand = computation;
+      this.operation = undefined;
+      this.previousOperand = '';
+
+    } else if (isNaN(prev)) {
+      computation = Math.sqrt(current);
+
+      this.readyToReset = true;
+      computation = Number(computation.toFixed(14));
+      this.currentOperand = computation;
+      this.operation = undefined;
+      this.previousOperand = '';
+    } else {
+      computation = Math.sqrt(current);
+      this.currentOperand = computation;
+    }
   }
 
   getDisplayNumber(number) {
@@ -111,7 +147,10 @@ const operationButtons = document.querySelectorAll('[data-operation]');
 const equalsButton = document.querySelector('[data-equals]');
 const deleteButton = document.querySelector('[data-delete]');
 const allClearButton = document.querySelector('[data-all-clear]');
-const minusXButton = document.querySelector('[data-minus-x]');
+const minusPlusButton = document.querySelector('[data-minus-plus]');
+
+
+const sqrtButton = document.querySelector('[data-sqrt]');
 
 const span = document.querySelector('.error-message');
 const errorMessage = document.createElement('span');
@@ -143,7 +182,12 @@ numberButtons.forEach(button => {
 
 operationButtons.forEach(button => {
   button.addEventListener('click', () => {
-    calculator.chooseOperation(button.innerText);
+    if (button.innerText === 'xy') {
+      calculator.chooseOperation('^');
+    } else {
+      calculator.chooseOperation(button.innerText);
+    }
+    
     calculator.updateDisplay();
     if (span.innerHTML === '<span>error</span>') {
       span.removeChild(errorMessage);
@@ -153,6 +197,11 @@ operationButtons.forEach(button => {
 
 equalsButton.addEventListener('click', button => {
   calculator.compute();
+  calculator.updateDisplay();
+})
+
+sqrtButton.addEventListener('click', button => {
+  calculator.computeSqrt();
   calculator.updateDisplay();
 })
 
@@ -172,7 +221,7 @@ deleteButton.addEventListener('click', button => {
   }
 })
 
-minusXButton.addEventListener('click', button => {
+minusPlusButton.addEventListener('click', button => {
   calculator.makeNumberNegative();
   calculator.updateDisplay();
   if (span.innerHTML === '<span>error</span>') {
