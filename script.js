@@ -85,9 +85,12 @@ class Calculator {
   }
 
   computeSqrt() {
+    
     let computation;
     let prev = parseFloat(this.previousOperand);
     let current = parseFloat(this.currentOperand);
+
+    if (isNaN(current)) return;
 
     if(current.toString()[0] === '-') {
       span.appendChild(errorMessage);
